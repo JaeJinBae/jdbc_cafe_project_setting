@@ -1,0 +1,32 @@
+use cafe_project; $$
+
+-- insert 트리거 생성
+
+create trigger insertTrigger
+	after insert on cafe_project.coffee
+	for each row 
+	begin
+	insert into goods (goodscode, supplycost, tax, salesprice, margincost)
+		values(new.code, 
+				(new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11),
+				ceiling((new.cost*new.salesamount)/11),
+				(new.cost*new.salesamount),
+				((new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11))*new.percentmargin/100
+	);
+	end $$
+
+	
+-- update 트리거 생성
+
+create trigger updateTrigger
+	after update
+	on cafe_project.coffee
+	for each row 
+	begin
+		update goods set
+		supplycost=(new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11),
+		tax=ceiling((new.cost*new.salesamount)/11),
+		salesprice=(new.cost*new.salesamount),
+		margincost=((new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11))*new.percentmargin/100
+		where goodscode=new.code;
+	end $$
