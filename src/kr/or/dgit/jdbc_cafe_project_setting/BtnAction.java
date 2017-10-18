@@ -9,7 +9,6 @@ import kr.or.dgit.jdbc_cafe_project_setting.service.DbService;
 import kr.or.dgit.jdbc_cafe_project_setting.service.ExportService;
 import kr.or.dgit.jdbc_cafe_project_setting.service.ImportService;
 import kr.or.dgit.jdbc_cafe_project_setting.service.InitService;
-import kr.or.dgit.jdbc_cafe_project_setting.service.Trigger_InitService;
 
 public class BtnAction extends AbstractAction {
 
@@ -24,7 +23,7 @@ public class BtnAction extends AbstractAction {
 		switch(e.getActionCommand()){
 		case "초기화":
 			service=InitService.getInstance();
-			//service=Trigger_InitService.getInstance();
+			
 			break;
 		case "백업":
 			service=ExportService.getInstance();
