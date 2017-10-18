@@ -26,13 +26,11 @@ public class InitService implements DbService {
 			StringBuilder statement = new StringBuilder();
 			for (String line; (line = br.readLine()) != null;) {
 				if (!line.isEmpty() && !line.startsWith("--")) {
-					System.out.println(statement);
 					statement.append(line.trim()+" ");
 				}
 				if (line.endsWith(";")) {
 					DatabaseDao.getInstance().executeUpdateSQL(statement.toString());
 					statement.setLength(0);
-					System.out.println(statement);
 				}
 			}
 		} catch (FileNotFoundException e) {
