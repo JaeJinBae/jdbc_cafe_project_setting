@@ -9,24 +9,44 @@ use cafe_project;
 
 -- coffee1 테이블 생성
 create table if not exists cafe_project.coffee(
-	code varchar(10) not null,
-	name varchar(20) not null,
-	cost integer(8) not null,
-	salesamount integer(8) not null,
-	percentmargin integer(2) not null,
-	primary key(code)
+	code varchar(10) not null primary key, 
+	name varchar(20) not null, 
+	cost integer(8) not null, 
+	salesamount integer(8) not null, 
+	percentmargin integer(2) not null
 );
 
 -- goods테이블 생성
-create table if not exists cafe_project.goods (
-	goodscode varchar(10), 
-	supplycost integer(8),
-	tax integer(8),
-	salesprice integer(8),
-	margincost integer(8),
-	foreign key(goodscode) references coffee(code)
-	on delete cascade 
+create table if not exists cafe_project.goods(
+	goodscode varchar(10) primary key, 
+	supplycost integer(8), 
+	tax integer(8), 
+	salesprice integer(8), 
+	margincost integer(8), 
+	foreign key(goodscode) references coffee(code) 
+	on delete cascade
 );
+
+-- insert 트리거 생성
+create trigger insertTrigger after insert on cafe_project.coffee 
+	for each row 
+	begin 
+	insert into goods values(
+	new.code, 
+	(new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11), 
+	ceiling((new.cost*new.salesamount)/11), 
+	(new.cost*new.salesamount), 
+	((new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11))*new.percentmargin/100); end;
+
+-- update 트리거 생성
+create trigger updateTrigger after update on cafe_project.coffee 
+	for each row 
+	begin 
+	update goods set 
+	supplycost=(new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11), 
+	tax=ceiling((new.cost*new.salesamount)/11), 
+	salesprice=(new.cost*new.salesamount), 
+	margincost=((new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11))*new.percentmargin/100 where goodscode=new.code; end;
 
 -- 순위까지 나타내는 view 생성
 create view showList as select (select count(*)+1 from goods where salesprice>g.salesprice) as crank, 
@@ -34,7 +54,6 @@ create view showList as select (select count(*)+1 from goods where salesprice>g.
 	from coffee c, goods g
 	where c.code=g.goodscode
 	order by crank asc;
-
 
 -- create and gran user
 grant select, insert, update, delete on cafe_project.* to 'user_erp_project' identified by '1234';

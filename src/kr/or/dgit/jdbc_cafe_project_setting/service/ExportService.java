@@ -14,39 +14,30 @@ import kr.or.dgit.jdbc_cafe_project_setting.dao.DatabaseDao;
 import kr.or.dgit.jdbc_cafe_project_setting.jdbc.JdbcUtil;
 
 public class ExportService implements DbService {
-	private static final ExportService instance=new ExportService();
-	
-	
-	
-	
+	private static final ExportService instance = new ExportService();
+
 	public static ExportService getInstance() {
 		return instance;
 	}
-
-
-
 
 	private ExportService() {
 		// TODO Auto-generated constructor stub
 	}
 
-
-
-
 	@Override
 	public void service() {
 		DatabaseDao.getInstance().executeUpdateSQL("USE " + Config.DB_NAME);
 		checkBackupDir();
-		for(String tblName : Config.TABLE_NAME) {
+		for (String tblName : Config.TABLE_NAME) {
 			exportData(String.format("select * from %s", tblName), Config.getFilePath(tblName, true), tblName);
-		}		
+		}
 	}
 
 	private void checkBackupDir() {
-		File backupDir=new File(Config.EXPORT_DIR);
-		
-		if(backupDir.exists()) {
-			for(File file : backupDir.listFiles()) {
+		File backupDir = new File(Config.EXPORT_DIR);
+
+		if (backupDir.exists()) {
+			for (File file : backupDir.listFiles()) {
 				file.delete();
 				System.out.printf("%s Delete Success! %n", file.getName());
 			}
@@ -55,8 +46,8 @@ public class ExportService implements DbService {
 			System.out.printf("%s make dir Success! %n", Config.EXPORT_DIR);
 		}
 	}
-	
-	private void exportData(String sql, String exportPath, String tblName){
+
+	private void exportData(String sql, String exportPath, String tblName) {
 		StringBuilder sb = new StringBuilder();
 		OutputStreamWriter dos = null;
 		ResultSet rs = null;
@@ -64,13 +55,14 @@ public class ExportService implements DbService {
 			rs = DatabaseDao.getInstance().executeQuerySQL(sql);
 			int colCnt = rs.getMetaData().getColumnCount();// 컬럼의 개수
 			while (rs.next()) {
-				for (int i = 1; i <= colCnt; i++) { 
+				for (int i = 1; i <= colCnt; i++) {
 					sb.append(rs.getObject(i) + "	");
 				}
-				sb.replace(sb.length() - 1, sb.length(), ""); // 마지막 라인의 comma 제거
+				sb.replace(sb.length() - 1, sb.length(), ""); // 마지막 라인의 comma
+																// 제거
 				sb.append("\r\n");
 			}
-			
+
 			backupFileWrite(sb.toString(), exportPath);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -82,14 +74,15 @@ public class ExportService implements DbService {
 			e.printStackTrace();
 		} finally {
 			JdbcUtil.close(rs);
-			JdbcUtil.close(dos);	
+			JdbcUtil.close(dos);
 		}
 	}
-	
-	private void backupFileWrite(String str, String exportPath) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-		try(OutputStreamWriter dos = new OutputStreamWriter(new FileOutputStream(exportPath),"UTF-8")){
+
+	private void backupFileWrite(String str, String exportPath)
+			throws UnsupportedEncodingException, FileNotFoundException, IOException {
+		try (OutputStreamWriter dos = new OutputStreamWriter(new FileOutputStream(exportPath), "UTF-8")) {
 			dos.write(str);
-		} 	
+		}
 	}
 
 }
