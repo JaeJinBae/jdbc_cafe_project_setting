@@ -11,9 +11,9 @@ use cafe_project;
 create table if not exists cafe_project.coffee(
 	code varchar(10) not null,
 	name varchar(20) not null,
-	cost varchar(8) not null,
-	salesamount varchar(8) not null,
-	percentmargin varchar(2) not null,
+	cost integer(8) not null,
+	salesamount integer(8) not null,
+	percentmargin integer(2) not null,
 	primary key(code)
 );
 
@@ -27,6 +27,13 @@ create table if not exists cafe_project.goods (
 	foreign key(goodscode) references coffee(code)
 	on delete cascade 
 );
+
+-- 순위까지 나타내는 view 생성
+create view showList as select (select count(*)+1 from goods where salesprice>g.salesprice) as crank, 
+	c.code, c.name, c.cost, c.salesamount, c.percentmargin, g.supplycost, g.tax, g.salesprice, g.margincost
+	from coffee c, goods g
+	where c.code=g.goodscode
+	order by crank asc;
 
 
 -- create and gran user
