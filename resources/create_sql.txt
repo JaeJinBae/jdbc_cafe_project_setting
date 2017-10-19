@@ -49,11 +49,18 @@ create trigger updateTrigger after update on cafe_project.coffee
 	margincost=((new.cost*new.salesamount)-ceiling((new.cost*new.salesamount)/11))*new.percentmargin/100 where goodscode=new.code; end;
 
 -- 순위까지 나타내는 view 생성
-create view showList as select (select count(*)+1 from goods where salesprice>g.salesprice) as crank, 
+create view showAllBySalesprice as select (select count(*)+1 from goods where salesprice>g.salesprice) as crank, 
 	c.code, c.name, c.cost, c.salesamount, c.percentmargin, g.supplycost, g.tax, g.salesprice, g.margincost
 	from coffee c, goods g
 	where c.code=g.goodscode
 	order by crank asc;
 
+-- 마진액순위 view 생성
+create view showAllbyMargincost as select (select count(*)+1 from goods where margincost>g.margincost) as crank, 
+	c.code, c.name, c.cost, c.salesamount, c.percentmargin, g.supplycost, g.tax, g.salesprice, g.margincost
+	from coffee c, goods g
+	where c.code=g.goodscode
+	order by crank asc;
+	
 -- create and gran user
 grant select, insert, update, delete on cafe_project.* to 'user_erp_project' identified by '1234';
