@@ -11,18 +11,18 @@ use cafe_project;
 create table if not exists cafe_project.coffee(
 	code varchar(10) not null primary key, 
 	name varchar(20) not null, 
-	cost integer(8) not null, 
-	salesamount integer(8) not null, 
-	percentmargin integer(2) not null
+	cost integer(8) default 0, 
+	salesamount integer(8) default 0, 
+	percentmargin integer(2) default 0
 );
 
 -- goods테이블 생성
 create table if not exists cafe_project.goods(
 	goodscode varchar(10) primary key, 
-	supplycost integer(8), 
-	tax integer(8), 
-	salesprice integer(8), 
-	margincost integer(8), 
+	supplycost integer(8) default 0, 
+	tax integer(8) default 0, 
+	salesprice integer(8) default 0, 
+	margincost integer(8) default 0, 
 	foreign key(goodscode) references coffee(code) 
 	on delete cascade
 );
