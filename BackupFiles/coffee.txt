@@ -1,3 +1,11 @@
 A001	아메리카노	4500	150	10
+<<<<<<< HEAD
+=======
+A002	카푸치노	3800	140	15
+>>>>>>> branch 'master' of https://github.com/JaeJinBae/jdbc_cafe_project_setting.git
 B002	후르츠와인	4300	110	11
 B003	녹차라떼	4500	150	10
+<<<<<<< HEAD
+=======
+Z111	까나리	1000	200	10
+>>>>>>> branch 'master' of https://github.com/JaeJinBae/jdbc_cafe_project_setting.git
